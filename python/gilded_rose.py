@@ -6,7 +6,6 @@ from item import Item
 AGED_BRIE = "Aged Brie"
 SULFURAS = "Sulfuras, Hand of Ragnaros"
 BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert"
-SpecialItemNames = (AGED_BRIE, SULFURAS, BACKSTAGE)
 
 # Quality bounds
 MAX_QUALITY = 50
@@ -47,7 +46,7 @@ class UpdateSulfuras(ItemUpdate):
         pass
 
     def _adjust_quality(self, item: Item) -> None:
-        pass
+        item.quality = SUFURAS_QUALITY
 
 class UpdateBackstage(ItemUpdate):
     def _adjust_quality(self, item: Item) -> None:
