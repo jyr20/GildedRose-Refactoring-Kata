@@ -4,6 +4,7 @@ from item import Item
 AGED_BRIE = "Aged Brie"
 SULFURAS = "Sulfuras, Hand of Ragnaros"
 BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert"
+CONJURED = "Conjured Item"
 NORMAL = "Normal Item"
 
 
@@ -140,6 +141,28 @@ class TestBackstagePasses:
         item = update(BACKSTAGE, 5, 49)
         assert item.sell_in == 4
         assert item.quality == 50
+
+
+class TestConjuredItems:
+    def test_quality_degrades_by_two_before_sell_by(self):
+        item = update(CONJURED, 3, 6)
+        assert item.sell_in == 2
+        assert item.quality == 4
+
+    def test_quality_degrades_by_four_on_sell_by(self):
+        item = update(CONJURED, 0, 6)
+        assert item.sell_in == -1
+        assert item.quality == 2
+
+    def test_quality_degrades_by_four_after_sell_by(self):
+        item = update(CONJURED, -1, 6)
+        assert item.sell_in == -2
+        assert item.quality == 2
+
+    def test_quality_does_not_go_negative(self):
+        item = update(CONJURED, 0, 3)
+        assert item.sell_in == -1
+        assert item.quality == 0
 
 
 class TestInventory:
