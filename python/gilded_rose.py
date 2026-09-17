@@ -38,6 +38,40 @@ class UpdateNormal(ItemUpdate):
     def _adjust_quality(self, item: Item) -> None:
         decrease_quality(item, 2 if item.sell_in < 0 else 1)
 
+class UpdateBrie(ItemUpdate):
+    def _adjust_quality(self, item: Item) -> None:
+        increase_quality(item, 2 if item.sell_in < 0 else 1)
+
+class UpdateSulfuras(ItemUpdate):
+    def _age(self, item: Item) -> None:
+        pass
+
+    def _adjust_quality(self, item: Item) -> None:
+        pass
+
+class UpdateBackstage(ItemUpdate):
+    def _adjust_quality(self, item: Item) -> None:
+        if item.sell_in < 0:
+            item.quality = 0
+            return
+        if item.sell_in < 5:
+            increase_quality(item, 3)
+        elif item.sell_in < 10:
+            increase_quality(item, 2)
+        else:
+            increase_quality(item, 1)
+
+UPDATERS: dict[str, type[ItemUpdate]] = {
+    AGED_BRIE: UpdateBrie,
+    SULFURAS: UpdateSulfuras,
+    BACKSTAGE: UpdateBackstage,
+}
+
+
+def updater_for(item: Item) -> ItemUpdate:
+    cls = UPDATERS.get(item.name, UpdateNormal)
+    return cls()
+
 
 class GildedRose(object):
 
@@ -46,33 +80,4 @@ class GildedRose(object):
 
     def update_quality(self):
         for item in self.items:
-            if item.name in SpecialItemNames:
-                if item.name != AGED_BRIE and item.name != BACKSTAGE:
-                    if item.quality > 0:
-                        if item.name != SULFURAS:
-                            item.quality = item.quality - 1
-                else:
-                    if item.quality < 50:
-                        item.quality = item.quality + 1
-                        if item.name == BACKSTAGE:
-                            if item.sell_in < 11:
-                                if item.quality < 50:
-                                    item.quality = item.quality + 1
-                            if item.sell_in < 6:
-                                if item.quality < 50:
-                                    item.quality = item.quality + 1
-                if item.name != SULFURAS:
-                    item.sell_in = item.sell_in - 1
-                if item.sell_in < 0:
-                    if item.name != AGED_BRIE:
-                        if item.name != BACKSTAGE:
-                            if item.quality > 0:
-                                if item.name != SULFURAS:
-                                    item.quality = item.quality - 1
-                        else:
-                            item.quality = item.quality - item.quality
-                    else:
-                        if item.quality < 50:
-                            item.quality = item.quality + 1
-            else:
-                UpdateNormal().update(item)
+            updater_for(item).update(item)
