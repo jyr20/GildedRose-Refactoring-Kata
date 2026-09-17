@@ -6,6 +6,7 @@ from item import Item
 AGED_BRIE = "Aged Brie"
 SULFURAS = "Sulfuras, Hand of Ragnaros"
 BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert"
+CONJURED = "Conjured Item"
 
 # Quality bounds
 MAX_QUALITY = 50
@@ -60,10 +61,15 @@ class UpdateBackstage(ItemUpdate):
         else:
             increase_quality(item, 1)
 
+class UpdateConjured(ItemUpdate):
+    def _adjust_quality(self, item: Item) -> None:
+        decrease_quality(item, 4 if item.sell_in < 0 else 2)
+
 UPDATERS: dict[str, type[ItemUpdate]] = {
     AGED_BRIE: UpdateBrie,
     SULFURAS: UpdateSulfuras,
     BACKSTAGE: UpdateBackstage,
+    CONJURED: UpdateConjured,
 }
 
 
