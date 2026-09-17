@@ -1,4 +1,5 @@
-from gilded_rose import GildedRose, Item
+from gilded_rose import GildedRose
+from item import Item
 
 AGED_BRIE = "Aged Brie"
 SULFURAS = "Sulfuras, Hand of Ragnaros"
